@@ -1,0 +1,12 @@
+# Exclude Visual Studio temporary files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+bin/
+obj/
+TestResults/
+*.log
+*.dbmdl
+*.cache

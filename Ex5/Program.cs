@@ -7,8 +7,26 @@ public class Program
 {
     static async Task Main(string[] args)
     {
-        var data = await GetCurrentTemp("Bucharest");
-        Console.WriteLine(data);
+        Console.WriteLine("Introdu orasul unde vrei sa vezi temperatura:");
+        string city = Console.ReadLine();
+        string data = await GetCurrentTemp(city);
+        double.TryParse(data, out double temp);
+
+        Console.WriteLine($"Introdu temperatura medie (celsius) in orasul introdus la aceasta data:");
+        double avgTemp = double.Parse(Console.ReadLine());
+        
+        if(temp > avgTemp && (temp - avgTemp<=10) )
+            Console.WriteLine("E mai cald");
+        else if(temp > avgTemp)
+            Console.WriteLine("Foarte cald");
+        else if(temp < avgTemp && (avgTemp - temp <= 10))
+            Console.WriteLine("E mai rece");
+        else if(temp < avgTemp)
+            Console.WriteLine("Foarte rece");
+        else
+            Console.WriteLine("Temperatura este egala cu media.");
+
+        Console.WriteLine($"Temperatura actual este {data}");
         
 
     }
@@ -22,6 +40,7 @@ public class Program
         string response = await client.GetStringAsync(url);
 
         var json = JObject.Parse(response);
-        return json.ToString();
+        var temperature = json["main"]["temp"];
+        return $"{temperature}";
     }
 }

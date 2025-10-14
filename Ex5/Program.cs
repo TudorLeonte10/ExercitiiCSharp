@@ -1,46 +1,30 @@
-﻿using System;
+﻿using DotNetEnv;
+using Ex5;
+using Ex5.Strategies;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 
 public class Program
 {
-    static async Task Main(string[] args)
+    public static async Task Main(string[] args)
     {
         Console.WriteLine("Introdu orasul unde vrei sa vezi temperatura:");
-        string city = Console.ReadLine();
-        string data = await GetCurrentTemp(city);
-        double.TryParse(data, out double temp);
+        string city = Console.ReadLine() ?? "";
 
-        Console.WriteLine($"Introdu temperatura medie (celsius) in orasul introdus la aceasta data:");
-        double avgTemp = double.Parse(Console.ReadLine());
-        
-        if(temp > avgTemp && (temp - avgTemp<=10) )
-            Console.WriteLine("E mai cald");
-        else if(temp > avgTemp)
-            Console.WriteLine("Foarte cald");
-        else if(temp < avgTemp && (avgTemp - temp <= 10))
-            Console.WriteLine("E mai rece");
-        else if(temp < avgTemp)
-            Console.WriteLine("Foarte rece");
-        else
-            Console.WriteLine("Temperatura este egala cu media.");
+        var service = new WeatherService();
+        double currentTemp = await service.GetCurrentTemperatureAsync(city);
 
-        Console.WriteLine($"Temperatura actuala este {data}");
-        
+        Console.WriteLine("Introdu temperatura medie (Celsius):");
+        double averageTemp = double.Parse(Console.ReadLine() ?? "0");
 
-    }
+        var context = new TemperatureContext();
+        string message = context.Evaluate(currentTemp, averageTemp);
 
-    static async Task<string> GetCurrentTemp(string city)
-    {
-        string apiKey = Environment.GetEnvironmentVariable("WEATHER_API_KEY");
-        string url = $"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={apiKey}&units=metric";
-
-        var client = new HttpClient();
-        string response = await client.GetStringAsync(url);
-
-        var json = JObject.Parse(response);
-        var temperature = json["main"]["temp"];
-        return $"{temperature}";
+        Console.WriteLine($"\nIn {city}:");
+        Console.WriteLine($" - Temperatura actuala: {currentTemp}°C");
+        Console.WriteLine($" - Temperatura medie: {averageTemp}°C");
+        Console.WriteLine($" - Concluzie: {message}");
     }
 }

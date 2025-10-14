@@ -33,7 +33,7 @@ namespace Ex17
             {
                 Console.WriteLine(ticket);
             }
-            Console.WriteLine($" Total încasari: {GetTotalIncome()} lei");
+            Console.WriteLine($" Total incasari: {GetTotalIncome()} lei");
         }
     }
 }

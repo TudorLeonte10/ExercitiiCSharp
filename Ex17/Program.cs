@@ -17,7 +17,6 @@ public class Program
             _ => ScreenType.TwoD
         };
 
-        Console.Write("Pretul de baza la un bilet este 20 de lei: ");
         double basePrice = 20;
 
         var movie = new Movie(title, type, basePrice);

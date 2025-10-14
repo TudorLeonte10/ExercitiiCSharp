@@ -26,14 +26,14 @@ public class Program
         else
             Console.WriteLine("Temperatura este egala cu media.");
 
-        Console.WriteLine($"Temperatura actual este {data}");
+        Console.WriteLine($"Temperatura actuala este {data}");
         
 
     }
 
     static async Task<string> GetCurrentTemp(string city)
     {
-        string apiKey = "cf00264d98a4af3193cb6edf8b270975";
+        string apiKey = Environment.GetEnvironmentVariable("WEATHER_API_KEY");
         string url = $"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={apiKey}&units=metric";
 
         var client = new HttpClient();

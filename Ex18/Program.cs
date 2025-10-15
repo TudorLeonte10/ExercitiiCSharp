@@ -65,7 +65,7 @@ namespace Ex18 {
                         Console.WriteLine(" add               -> adauga o sarcina");
                         Console.WriteLine(" list              -> afisează toate sarcinile");
                         Console.WriteLine(" edit              -> modifica titlul unei sarcini");
-                        Console.WriteLine(" delete            -> șterge o sarcina");
+                        Console.WriteLine(" delete            -> sterge o sarcina");
                         Console.WriteLine(" help              -> afiseaza comenzi");
                         Console.WriteLine(" exit              -> închide aplicatia");
                         break;

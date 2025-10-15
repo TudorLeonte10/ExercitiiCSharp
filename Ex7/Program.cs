@@ -1,40 +1,19 @@
-﻿using System;
+﻿using Ex7.Interfaces;
+using Ex7.Services;
+using System;
 
-public class Program
+internal class Program
 {
-    static void Main (string[] args)
+    static void Main()
     {
-        Console.WriteLine("Baga N: ");
-        int.TryParse(Console.ReadLine(), out int n);
+        Console.WriteLine(" Number Guessing Game");
 
-        int min = 0;
-        int max = n;
-        int tries = 0;
+        int baseNumber = int.Parse(Console.ReadLine());
 
-        while (true)
-        {
-            int guess = (min + max) / 2;
-            Console.WriteLine($"Is your number {guess}?");
-            tries++;
-            string response = Console.ReadLine();
-            if (response.ToLower() == "Prea mare".ToLower())
-            {
-                max = guess - 1;
-            }
-            else if (response.ToLower() == "Prea mic".ToLower())
-            {
-                min = guess + 1;
-            }
-            else if (response.ToLower() == "Corect".ToLower())
-            {
-                Console.WriteLine($"Ce bun sunt. Am ghicit din {tries} incercari.");
-                break;
-            }
-            else
-            {
-                Console.WriteLine("Raspunde doar cu: 'Prea mare', 'Prea mic' si 'Corect'");
-                tries--;
-            }
-        }
+        IGuessingStrategy strategy = new BinaryGuessingStrategy(baseNumber);
+        IUserFeedbackProvider feedbackProvider = new ConsoleFeedbackProvider();
+        var engine = new GameEngine(strategy, feedbackProvider);
+
+        engine.Start();
     }
 }

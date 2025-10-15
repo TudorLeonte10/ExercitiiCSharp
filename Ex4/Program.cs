@@ -1,34 +1,16 @@
-﻿using System;
+﻿using Ex4.Interfaces;
+using Ex4.Services;
+using System;
 
-public class Program
+internal class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        string username = "tudy";
-        string password = "pass123";
-        int tries = 3;
+        ICredentialProvider provider = new InMemoryCredentialProvider();
+        IUserValidator validator = new BasicUserValidator(provider);
+        var loginManager = new LoginManager(validator);
 
-        while (tries > 0)
-        {
-            Console.WriteLine("Username:");
-            string tryUser = Console.ReadLine();
-            Console.WriteLine("Password:");
-            string tryPass = Console.ReadLine();
-
-            if (tryUser == username && tryPass == password)
-            {
-                Console.WriteLine("Te-ai logat cu succes");
-                break;
-            }
-            else if (tryUser != username || tryPass != password)
-            {
-                Console.WriteLine("Ai gresit username sau parola");
-                tries--;
-            }
-        }
-        if (tries == 0)
-        {
-            Console.WriteLine("Nu mai ai incercari");
-        }
+        Console.WriteLine(" Auth\n");
+        loginManager.Authenticate();
     }
 }

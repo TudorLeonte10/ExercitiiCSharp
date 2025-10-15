@@ -1,24 +1,28 @@
-﻿using System;
-using System.Security.Cryptography.X509Certificates;
+﻿using StockManagement.Core;
+using StockManagement.Models;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Ex15;
-public class Program
+class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        var product1 = new Product("Laptop", 4500.99, 10);
-        var product2 = new Product("Mouse", 150.50, 50);
-        var product3 = new Product("Keyboard", 300.75, 30);
-        var product4 = new Product("Monitor", 1200.00, 20);
+        var inventory = new ProductInventory();
 
-        var inventory = new Inventory();
-        inventory.AddProduct(product1);
-        inventory.AddProduct(product2);
-        inventory.AddProduct(product3);
-        inventory.AddProduct(product4);
-        inventory.RemoveProduct(product2, 10);
-        inventory.DisplayStock();
-        Console.WriteLine($"Total stock value: {inventory.StockValue()}");
+        var commands = new Dictionary<string, IStockCommand>
+        {
+            { "add", new AddCommand() },
+            { "remove", new RemoveCommand() }
+        };
+
+        var executor = new StockCommandExecutor(commands);
+
+        executor.Execute("add", inventory, new Product("Laptop", 3000m, 2));
+        executor.Execute("add", inventory, new Product("Mouse", 100m, 5));
+        executor.Execute("remove", inventory, new Product("Mouse", 0, 0));
+
+        Console.WriteLine($"Valoare totală stoc: {inventory.GetTotalValue()} RON");
     }
 }

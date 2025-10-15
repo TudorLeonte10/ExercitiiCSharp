@@ -10,3 +10,4 @@ TestResults/
 *.log
 *.dbmdl
 *.cache
+.env

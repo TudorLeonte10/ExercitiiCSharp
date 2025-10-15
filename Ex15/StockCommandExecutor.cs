@@ -1,4 +1,4 @@
-﻿using StockManagement.Core;
+﻿
 using StockManagement.Models;
 using System;
 using System.Collections.Generic;
@@ -10,16 +10,21 @@ namespace Ex15
 {
     public class StockCommandExecutor
     {
-        private readonly Dictionary<string, IStockCommand> _commands;
+        private readonly Dictionary<StockAction, IStockCommand> _commands;
 
-        public StockCommandExecutor(Dictionary<string, IStockCommand> commands)
+        public StockCommandExecutor(Dictionary<StockAction, IStockCommand> commands)
         {
             _commands = commands;
         }
 
-        public void Execute(string action, ProductInventory inventory, Product product)
+        public void Add(ProductInventory inventory, Product product)
         {
-            _commands[action].Execute(inventory, product);
+            _commands[StockAction.Add].Execute(inventory, product);
+        }
+
+        public void Remove(ProductInventory inventory, Product product)
+        {
+            _commands[StockAction.Remove].Execute(inventory, product);
         }
     }
 }

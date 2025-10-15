@@ -1,68 +1,36 @@
-﻿using System;
+﻿using Ex3.Interfaces;
+using Ex3.Services;
+using System;
 
-public class Program
+internal class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        Console.Write("Introduceți un an (ex: 2028): ");
-        int an;
-        while (!int.TryParse(Console.ReadLine(), out an) || an < 1)
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+        Console.WriteLine("Year Analyzer");
+        Console.Write("Enter a year: ");
+
+        if (!int.TryParse(Console.ReadLine(), out var year) || year < 1)
         {
-            Console.Write("Valoare invalidă. Introduceți un an valid (>0): ");
+            Console.WriteLine("Invalid year.");
+            return;
         }
 
-        bool esteBisect = DateTime.IsLeapYear(an);
-        int zileAn = esteBisect ? 366 : 365;
-        int saptamani = zileAn / 7;
+        IYearRule leapRule = new LeapYearRule();
+        IHolidayProvider holidays = new RomanianHolidayProvider();
+        var calculator = new YearCalculator(leapRule, holidays);
 
-        Console.WriteLine($"\nAnul {an} {(esteBisect ? "este" : "nu este")} bisect.");
-        Console.WriteLine($"Are {zileAn} zile ({saptamani} săptămâni complete).");
+        var info = calculator.Analyze(year);
 
-        var sarbatori = GetSarbatori(an);
+        Console.WriteLine($"\nYear: {info.Year}");
+        Console.WriteLine($"Leap year: {(info.IsLeapYear ? "Yes" : "No")}");
+        Console.WriteLine($"Total days: {info.TotalDays}");
+        Console.WriteLine($"Work days: {info.WorkDays}");
+        Console.WriteLine($"Weeks: {info.Weeks}");
+        Console.WriteLine($"\n Holidays:");
 
-        Console.WriteLine("\nSărbători legale:");
-        foreach (var s in sarbatori)
-            Console.WriteLine($"- {s:dd MMMM yyyy} ({s.DayOfWeek})");
-
-        int zileLucratoare = CalcZileLucratoare(an, sarbatori);
-
-        Console.WriteLine($"\nZile lucrătoare în anul {an}: {zileLucratoare}");
-    }
-
-    static List<DateTime> GetSarbatori(int an)
-    {
-        var sarb = new List<DateTime>()
-        {
-            new DateTime(an, 1, 1),   // Anul Nou
-                new DateTime(an, 1, 2),   // A doua zi de An Nou
-                new DateTime(an, 1, 24),  // Ziua Unirii
-                new DateTime(an, 5, 1),   // Ziua Muncii
-                new DateTime(an, 6, 1),   // Ziua Copilului
-                new DateTime(an, 8, 15),  // Adormirea Maicii Domnului
-                new DateTime(an, 11, 30), // Sf. Andrei
-                new DateTime(an, 12, 1),  // Ziua Națională
-                new DateTime(an, 12, 25), // Crăciunul
-                new DateTime(an, 12, 26), // A doua zi de Crăciun
-        };
-        return sarb;
-    }
-
-    static int CalcZileLucratoare(int an, List<DateTime> sarbatori)
-    {
-        DateTime start = new DateTime(an, 1, 1);
-        DateTime end = new DateTime(an, 12, 31);
-        int days = 0;
-
-        for (var day = start; day <= end; day = day.AddDays(1))
-        {
-            if (day.DayOfWeek == DayOfWeek.Saturday || day.DayOfWeek == DayOfWeek.Sunday)
-                continue;
-
-            if (sarbatori.Any(s => s.Date == day.Date))
-                continue;
-
-            days++;
-        }
-        return days;
+        foreach (var h in info.Holidays)
+            Console.WriteLine($"- {h}");
     }
 }

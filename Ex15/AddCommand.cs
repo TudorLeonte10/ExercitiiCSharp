@@ -1,4 +1,4 @@
-﻿using StockManagement.Core;
+﻿
 using StockManagement.Models;
 using System;
 using System.Collections.Generic;
@@ -13,6 +13,7 @@ namespace Ex15
         public void Execute(ProductInventory inventory, Product product)
         {
             inventory.AddProduct(product);
+            Console.WriteLine($"Added {product.Name} (Qty: {product.Quantity}, Price: {product.Price:C})");
         }
     }
 }

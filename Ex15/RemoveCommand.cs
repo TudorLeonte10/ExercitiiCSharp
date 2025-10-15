@@ -1,4 +1,4 @@
-﻿using StockManagement.Core;
+﻿
 using StockManagement.Models;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,8 @@ namespace Ex15
     {
         public void Execute(ProductInventory inventory, Product product)
         {
-            inventory.RemoveProduct(product);
+            inventory.RemoveProduct(product.Name);
+            Console.WriteLine($" Removed {product.Name} from inventory.");
         }
     }
 }

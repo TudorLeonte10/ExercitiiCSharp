@@ -1,50 +1,64 @@
-﻿using System;
+﻿using Ex2;
+using Ex2.Models;
+using System;
 using System.Collections;
 
-public class Program
+internal class Program
 {
-
-    static void Main (string[] args)
+    static void Main()
     {
-        var dict = new Dictionary<string, List<int>>();
-        Console.WriteLine("Introdu numarul de materii:");
-        int nrObj;
-        int.TryParse(Console.ReadLine(), out nrObj);
+        Console.WriteLine("Grade Evaluator");
+        Console.Write("Enter student name: ");
+        var student = new Student { Name = Console.ReadLine() ?? "Unknown" };
 
-        while (nrObj > 0)
+        bool addMoreSubjects = true;
+        while (addMoreSubjects)
         {
-            var gradesList = new List<int>();
-            Console.WriteLine("Introdu numele unei materii:");
-            string? obj = Console.ReadLine();
+            Console.Write("\nEnter subject name: ");
+            var subject = new Subject { Name = Console.ReadLine() ?? "Unknown" };
 
-            Console.WriteLine("Introdu numarul de note la aceasta materie:");
-            int nrGrades;
-            int.TryParse(Console.ReadLine(), out nrGrades);
-            nrObj--;
-            while (nrGrades > 0)
+            Console.Write("Enter grades separated by space (0–100): ");
+            var input = Console.ReadLine();
+            if (string.IsNullOrWhiteSpace(input))
             {
-                Console.WriteLine("Introdu notele la aceasta materie");
-                int grade;
-                int.TryParse(Console.ReadLine(), out grade);
-                gradesList.Add(grade);
-                nrGrades--;
+                Console.WriteLine(" No grades entered.");
+                continue;
             }
 
-            dict.Add(obj, gradesList);
+            subject.Grades = input.Split(' ')
+                .Select(g => double.TryParse(g, out var n) && n >= 0 && n <= 100 ? n : 0)
+                .ToList();
+
+            student.Subjects.Add(subject);
+
+            Console.Write("Add another subject? (y/n): ");
+            addMoreSubjects = (Console.ReadLine()?.Trim().ToLower() == "y");
         }
 
-        var allMeans = new List<double>();
-        foreach (var pair in dict)
+        // Afișăm strategiile disponibile
+        Console.WriteLine("\nAvailable grading strategies:");
+        foreach (var s in GradingFactory.GetStrategies())
+            Console.WriteLine($"- {s.Name}");
+
+        Console.Write("\nChoose strategy: ");
+        var chosen = Console.ReadLine();
+        var strategy = GradingFactory.GetByName(chosen ?? "") ?? GradingFactory.GetStrategies().First();
+
+        Console.WriteLine($"\n Using strategy: {strategy.Name}\n");
+
+        double total = 0;
+        int subjectCount = 0;
+
+        foreach (var subj in student.Subjects)
         {
-            string obj = pair.Key;
-            List<int> grades = pair.Value;
-
-            double mean = grades.Average();
-            allMeans.Add(mean);
-            Console.WriteLine($"Materia: {obj} -> Media: {mean}");
+            double avg = strategy.CalculateAverage(subj.Grades);
+            Console.WriteLine($"{subj.Name,-15} → {avg:F2}");
+            total += avg;
+            subjectCount++;
         }
 
-        var totalMean = allMeans.Average();
-        Console.WriteLine($"Media totala este: {totalMean}");
+        double generalAvg = subjectCount > 0 ? total / subjectCount : 0;
+        Console.WriteLine($"\n General Average: {generalAvg:F2}");
     }
 }
+

@@ -1,26 +1,33 @@
-﻿using System;
+﻿using Ex11.Interfaces;
+using Ex11.Services;
+using System;
 
-public class Program
+internal class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        Console.WriteLine("(Omul A) Man, hai sa ne intalnim candva");
-        Console.WriteLine("(Omul B) Hai. Scrie tu data si ora la care ar fi ok pentru tine si eu iti confirm daca pot");
-        string data = Console.ReadLine();
-        string ora = Console.ReadLine();
-        Console.WriteLine($"Eu as putea pe {data} la ora {ora}. E ok?");
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        Console.WriteLine("Meeting Planner Application\n");
 
-        DateTime dataIntalnire;
-        string combined = $"{data} {ora}";
+        IUserInterface ui = new ConsoleUserInterface();
+        var manager = new MeetingManager(ui);
+        var commands = CommandRegistry.Build(manager, ui);
 
-        if (DateTime.TryParse(combined, out dataIntalnire))
+        while (true)
         {
-            Console.WriteLine($"Da, e bine. Deci ramane sa ne vedem exact atunci: {dataIntalnire}");
-        }
-        else
-        {
-            Console.WriteLine("Error: data/ora nu e scrisa bine");
+            ui.ShowMessage("\nAvailable commands: add | confirm | show | exit");
+            string input = ui.GetInput("> ").Trim().ToLower();
 
+            if (input == "exit")
+            {
+                ui.ShowMessage("Program ended.");
+                break;
+            }
+
+            if (commands.TryGetValue(input, out ICommand? command))
+                command.Execute();
+            else
+                ui.ShowMessage("Unknown command.");
         }
     }
 }

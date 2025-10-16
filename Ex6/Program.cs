@@ -1,19 +1,20 @@
-﻿using System;
+﻿using Ex6.Interfaces;
+using Ex6.Services;
+using System;
 
-public class Program
+internal class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        Console.WriteLine("Introduceti un numar:");
-        int.TryParse(Console.ReadLine(), out int value);
+        Console.WriteLine("Enter a number:");
+        int number = int.Parse(Console.ReadLine());
 
-        for (int i = 1; i <= value; i++)
-        {
-            for (int j = 1; j <= value; j++)
-            {
-                Console.Write($"{ i* j,4}");
-            }
-            Console.WriteLine();
-        }
+        ITableGenerator generator = new MultiplicationTableGenerator();
+        var table = generator.Generate(number);
+
+        var printer = new ConsoleTablePrinter();
+        printer.Print(table);
     }
+
 }
+

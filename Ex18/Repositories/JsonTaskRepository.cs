@@ -16,7 +16,6 @@ namespace Ex18.Repositories
 
         public JsonTaskRepository()
         {
-            Console.WriteLine($" Expected JSON file: {Path.GetFullPath(_filePath)}");
 
             if (File.Exists(_filePath))
             {

@@ -1,53 +1,57 @@
-﻿using System;
+﻿using Ex1;
+using Ex1.Interfaces;
+using System;
 using System.Data;
 using System.Globalization;
 
-public class Program
+internal class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        Console.OutputEncoding = System.Text.Encoding.UTF8;
-        Console.WriteLine("Introdu o expresie matematica");
+        Console.WriteLine("Basic Calculator");
+        OperationFactory.ListAvailable();
+        Console.WriteLine("Example: 5 + 3 * 2");
 
-        while (true)
+        Console.Write("\nEnter expression: ");
+        var input = Console.ReadLine();
+
+        if (string.IsNullOrWhiteSpace(input))
         {
-            string expression = Console.ReadLine();
+            Console.WriteLine(" Empty input.");
+            return;
+        }
 
-            if (expression == "exit")
-                break;
-
-            try
-            {
-                if (!IsValid(expression))
-                {
-                    Console.WriteLine("Expresia are caractere nepermise");
-                    return;
-                }
-
-                var result = new DataTable().Compute(expression, null);
-                Console.WriteLine($"Rezultatul este: {result}");
-            }
-            catch (DivideByZeroException)
-            {
-                Console.WriteLine("Impartire la zero");
-            }
-
-            catch (Exception ex)
-            {
-                Console.WriteLine("Eroare de aiurea");
-            }
+        try
+        {
+            var result = EvaluateExpression(input);
+            Console.WriteLine($"\n Result = {result}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($" Error: {ex.Message}");
         }
     }
 
-    public static bool IsValid(string s)
+    static double EvaluateExpression(string input)
     {
-        foreach (char c in s)
+        var tokens = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        if (tokens.Length < 3 || tokens.Length % 2 == 0)
+            throw new InvalidOperationException("Invalid expression format.");
+
+        double result = double.Parse(tokens[0]);
+
+        for (int i = 1; i < tokens.Length; i += 2)
         {
-            if (!char.IsDigit(c) && !"+-*/%() ".Contains(c))
-            {
-                return false;
-            }
+            string symbol = tokens[i];
+            double nextValue = double.Parse(tokens[i + 1]);
+
+            IOperation? op = OperationFactory.GetOperation(symbol)
+                ?? throw new InvalidOperationException($"Unknown operator: {symbol}");
+
+            result = op.Execute(result, nextValue);
         }
-        return true;
+
+        return result;
     }
 }

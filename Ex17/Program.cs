@@ -1,50 +1,32 @@
 ﻿using Ex17;
+using Ex17.Services;
 using System;
+using Ex17.Interfaces;
 
-public class Program
+internal class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        Console.Write("Numele filmului: ");
-        string title = Console.ReadLine() ?? "Film necunoscut";
-
-        Console.Write("Tip ecranizare (2D / 3D / 4D): ");
-        string typeInput = Console.ReadLine()?.Trim().ToLower() ?? "2d";
-        ScreenType type = typeInput switch
-        {
-            "3d" => ScreenType.ThreeD,
-            "4d" or "4dx" => ScreenType.FourD,
-            _ => ScreenType.TwoD
-        };
-
-        double basePrice = 20;
-
-        var movie = new Movie(title, type, basePrice);
-        var sales = new CinemaSales();
-
-        Console.WriteLine("\nIntrodu biletele pe care vrei sa le cumperi (scrie 'stop' când ai terminat)\n");
+        IUserInterface ui = new ConsoleUserInterface();
+        var manager = new TicketManager();
+        var commands = CommandRegistry.Build(manager, ui);
 
         while (true)
         {
-            Console.Write("Zona (fata / mijloc / spate / stop): ");
-            string zone = Console.ReadLine()?.Trim().ToLower() ?? "";
+            ui.ShowMessage("\nAvailable commands: add | report | exit");
+            string input = ui.GetInput("> ").Trim().ToLower();
 
-            if (zone == "stop")
-                break;
-
-            Console.Write("Cate bilete doresti pentru aceasta zona? ");
-            int count = int.TryParse(Console.ReadLine(), out var n) ? n : 1;
-
-            for (int i = 0; i < count; i++)
+            if (input == "exit")
             {
-                var ticket = new Ticket(movie, zone);
-                sales.AddTicket(ticket);
+                ui.ShowMessage("Program ended.");
+                break;
             }
 
-            Console.WriteLine($"Adaugate {count} bilete la zona {zone}.");
+            if (commands.TryGetValue(input, out ICommand? command))
+                command.Execute();
+            else
+                ui.ShowMessage("Unknown command.");
         }
-
-        sales.ShowReport();
-
     }
 }
+

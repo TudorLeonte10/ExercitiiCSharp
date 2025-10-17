@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ex17
+namespace Ex17.Interfaces
 {
-    internal enum ScreenType
+    public interface ICommand
     {
-        TwoD,
-        ThreeD,
-        FourD
+        string Name { get; }
+        void Execute();
     }
 }
-

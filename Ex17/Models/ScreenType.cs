@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ex16
+namespace Ex17.Models
 {
-    public enum EngineType
+    public enum ScreenType
     {
-        Gas,
-        Diesel,
-        Electric,
-        LPG
+        TwoD,
+        ThreeD,
+        FourD
     }
 }

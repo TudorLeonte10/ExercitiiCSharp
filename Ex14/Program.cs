@@ -1,21 +1,15 @@
 ﻿using Ex14;
+using Ex14.Services;
 using System;
 
 public class Program
 {
     static void Main(string[] args)
     {
-        var acc = new BankAccount("B1234", "Tudy");
-        acc.Deposit(1000000);
-        try
-        {
-            acc.WithDraw(20000000);
-        }
-        catch (ArgumentException ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+        var ui = new ConsoleUserInterface();
+        var service = new BankService();
+        var manager = new AccountManager(ui,service);
 
-        acc.DisplaySold();
+        manager.Run();
     }
 }
